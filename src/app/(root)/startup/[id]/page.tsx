@@ -8,7 +8,7 @@ import Navbar from "@/components/Navbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-const StartupDetails = () => {
+const StartupDetails = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { id } = useParams();
   const [startup, setStartup] = useState(null);
