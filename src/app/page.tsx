@@ -1,14 +1,15 @@
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import ClientWrapper from "@/components/ClientWrapper";
 
-export default async function Home() {
+const HomePage = async () => {
   const session = await auth();
-  if (!session) redirect("/auth/login");
-  return (
-    <div className="w-full h-screen border-2 flex flex-col items-center justify-center">
-      <h1 className="flex items-center justify-center">
-        {session.user?.email}
-      </h1>
-    </div>
-  );
-}
+
+  if (session?.user) {
+    redirect("/home");
+  }
+
+  return <ClientWrapper />;
+};
+
+export default HomePage;
