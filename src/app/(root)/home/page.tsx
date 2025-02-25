@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 function Page() {
   const [startups, setStartups] = useState<any[]>([]);
@@ -63,9 +64,9 @@ function Page() {
       }}
       className="w-full min-h-screen"
     >
-      <Navbar />
-      <div className="flex bg-[#ffcc00] py-4 items-center justify-center mt-8">
-        <Carousel className="w-full max-w-4xl">
+      <div className="flex bg-[#ffcc00] pb-8 items-center justify-center flex-col">
+        <Navbar />
+        <Carousel className="w-full z-20 max-w-4xl mt-8">
           <CarouselContent>
             {startups.map((startup) => (
               <CarouselItem key={startup._id}>
@@ -104,10 +105,10 @@ function Page() {
         {startups.map((startup) => (
           <Card
             key={startup._id}
-            className="cursor-pointer hover:shadow-lg transition-shadow duration-300"
+            className="cursor-pointer hover:shadow-lg transition-shadow duration-300 flex flex-col"
             onClick={() => router.push(`/startup/${startup._id}`)}
           >
-            <CardContent className="p-4">
+            <CardContent className="p-4 flex flex-col flex-grow">
               <div className="relative h-48 overflow-hidden rounded-lg">
                 <Image
                   src={startup.coverImage}
@@ -128,11 +129,33 @@ function Page() {
                 <h2 className="ml-4 text-xl font-bold">{startup.title}</h2>
               </div>
 
-              <div className="mt-4">
-                <h3 className="text-sm font-semibold text-gray-600">Owner:</h3>
-                <p className="text-sm text-gray-500">
-                  {startup.admin[0].username}
+              <div className="mt-4 flex-grow">
+                <h3 className="text-sm font-semibold text-gray-600">
+                  Details:
+                </h3>
+                <p className="text-sm text-gray-500 line-clamp-3">
+                  {startup.details}
                 </p>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-600">
+                    Share Price:
+                  </h3>
+                  <p className="text-lg font-bold text-[#ffcc00]">
+                    ₹{startup.sharePrice}
+                  </p>
+                </div>
+                <Button
+                  className="bg-[#ffcc00] text-black font-bold hover:bg-[#ffcc00]/90"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/startup/${startup._id}`);
+                  }}
+                >
+                  Buy
+                </Button>
               </div>
             </CardContent>
           </Card>

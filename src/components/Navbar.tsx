@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,43 @@ import { signOut, useSession } from "next-auth/react";
 const Navbar = () => {
   const router = useRouter();
   const { data: session } = useSession();
-
   const [open, setOpen] = useState(false);
+  const [balance, setBalance] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (session?.user?._id) {
+        try {
+          const response = await fetch(`/api/auth/profile`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: session.user._id }),
+          });
+          const data = await response.json();
+          console.log(data);
+          if (response.ok) {
+            setBalance(data.user.balance);
+          } else {
+            console.error("Failed to fetch balance:", data.error);
+          }
+        } catch (error) {
+          console.error("Error fetching balance:", error);
+        }
+      }
+    };
+
+    fetchBalance();
+  }, [session]);
+
   const handleMenuToggle = () => setOpen((prev) => !prev);
+  const handleDropdownToggle = () => setDropdownOpen((prev) => !prev);
 
   return (
-    <div className="w-full flex items-center justify-center overflow-x-hidden">
-      <header className="w-[95%] z-20 flex justify-between text-black mt-5 items-center p-2 bg-white rounded-full border-2 border-black">
+    <div className="w-full flex items-center justify-center">
+      <header className="w-[95%] z-50 flex justify-between text-black mt-5 items-center p-2 bg-white rounded-full border-2 border-black">
         <Image
           src="/imgs/Logo.png"
           width={75}
@@ -36,15 +66,9 @@ const Navbar = () => {
           >
             Startup Guide
           </Link>
-          <Link
-            href="/valuation-finder"
-            className="hover:underline cursor-pointer"
-          >
-            Valuation Finder
-          </Link>
         </nav>
 
-        <div className="flex gap-2 items-center">
+        <div className="md:flex gap-2 hidden items-center">
           <Button
             onClick={() => router.push("/startup/create")}
             variant="secondary"
@@ -54,8 +78,11 @@ const Navbar = () => {
           </Button>
 
           {session?.user ? (
-            <div className="hidden md:flex items-center gap-2">
-              <div className="flex items-center gap-2 cursor-pointer">
+            <div className="hidden md:flex items-center gap-2 relative">
+              <div
+                className="flex items-center gap-2 cursor-pointer"
+                onClick={handleDropdownToggle}
+              >
                 <Image
                   src={session.user.image || "/imgs/avatar.png"}
                   width={40}
@@ -64,13 +91,34 @@ const Navbar = () => {
                   className="rounded-full"
                 />
               </div>
-              <Button
-                onClick={() => signOut()}
-                variant="outline"
-                className="rounded-full"
-              >
-                Sign Out
-              </Button>
+
+              {dropdownOpen && (
+                <div className="absolute top-12 z-50 right-0 bg-white border border-gray-200 rounded-lg shadow-lg w-48">
+                  <div className="p-4 font-semibold">
+                    <p className="text-sm font-semibold text-gray-800">
+                      Balance: ₹{balance !== null ? balance : "Loading..."}
+                    </p>
+                  </div>
+                  <Link
+                    href="/orders"
+                    className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
+                  >
+                    Orders
+                  </Link>
+                  <Link
+                    href="/add-money"
+                    className="block px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
+                  >
+                    Add Money
+                  </Link>
+                  <button
+                    onClick={() => signOut()}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-900 hover:bg-gray-100"
+                  >
+                    Sign Out
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
             <Button
@@ -116,19 +164,13 @@ const Navbar = () => {
           >
             Startup Guide
           </Link>
-          <Link
-            href="/valuation-finder"
-            className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer"
-          >
-            Valuation Finder
-          </Link>
           {!session?.user && (
             <>
               <Link
                 href="/auth/sign-up"
                 className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer"
               >
-                Sign-up
+                Sign up
               </Link>
               <Link
                 href="/auth/login"
@@ -140,12 +182,32 @@ const Navbar = () => {
           )}
 
           {session?.user && (
-            <button
-              onClick={() => signOut()}
-              className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer text-left text-[#ffcc00]"
-            >
-              Logout
-            </button>
+            <>
+              <button
+                onClick={() => signOut()}
+                className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer text-left text-[#ffcc00]"
+              >
+                Logout
+              </button>
+              <Link
+                href="/add-money"
+                className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer"
+              >
+                Add Money
+              </Link>
+              <Link
+                href="/orders"
+                className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer"
+              >
+                Orders
+              </Link>
+              <Link
+                href="/startup/create"
+                className="px-3 py-6 border-b-2 border-gray-500 w-full hover:bg-gray-700 cursor-pointer"
+              >
+                Create Startup
+              </Link>
+            </>
           )}
         </div>
       </div>

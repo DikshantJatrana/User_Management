@@ -11,11 +11,16 @@ async function dbConnect(): Promise<void> {
     console.log("Already connected to database");
     return;
   }
+
   try {
-    await mongoose.connect(process.env.MONGODB_URL || "", {});
+    mongoose.set("debug", true);
+    await mongoose.connect(process.env.MONGODB_URL || "", {
+      serverSelectionTimeoutMS: 15000,
+    });
     console.log("DB Connected successfully");
+    connection.isConnected = mongoose.connections[0].readyState;
   } catch (error) {
-    console.log("Database connection failed", error);
+    console.error("Database connection failed", error);
     process.exit(1);
   }
 }

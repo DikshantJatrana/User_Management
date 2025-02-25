@@ -46,18 +46,8 @@ function VerifyEmailContent() {
   }, [userId, verifyCode, router]);
 
   return (
-    <div
-      className="h-screen flex items-center justify-center bg-cover bg-center"
-      style={{
-        backgroundImage: "url('/imgs/dot1.avif')",
-        backgroundSize: "contain",
-      }}
-    >
-      <div className="bg-black bg-opacity-70 px-6 py-4 rounded-lg text-white text-center">
-        <h1 className="text-xl font-bold">
-          {loading ? "Verifying..." : "Redirecting..."}
-        </h1>
-      </div>
+    <div className="h-screen flex items-center justify-center">
+      <h1>{loading ? "Verifying..." : "Redirecting..."}</h1>
     </div>
   );
 }

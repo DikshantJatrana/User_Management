@@ -19,8 +19,18 @@ export async function PUT(
     const user = formData.get("user") as string;
     const logoFile = formData.get("logo") as File | null;
     const coverImageFile = formData.get("coverImage") as File | null;
+    const sharePrice = formData.get("sharePrice") as string;
+    const shareQuantity = formData.get("shareQuantity") as string;
+    const details = formData.get("details") as string;
 
-    if (!title || !description || !user) {
+    if (
+      !title ||
+      !description ||
+      !user ||
+      !sharePrice ||
+      !shareQuantity ||
+      !details
+    ) {
       return NextResponse.json({ error: "Invalid Details" }, { status: 400 });
     }
 
@@ -68,6 +78,9 @@ export async function PUT(
     existingStartup.title = title;
     existingStartup.description = description;
     existingStartup.slug = slugify(title, { lower: true, strict: true });
+    existingStartup.sharePrice = parseFloat(sharePrice);
+    existingStartup.shareQuantity = parseInt(shareQuantity, 10);
+    existingStartup.details = details;
 
     const updatedStartup = await existingStartup.save();
 

@@ -4,11 +4,13 @@ export interface Startup extends Document {
   title: string;
   logo: string;
   slug: string;
+  sharePrice: number;
+  shareQuantity: number;
+  details: string;
   coverImage: string;
   description: string;
   admin: Types.ObjectId[];
   member: Types.ObjectId[];
-  user: Types.ObjectId[];
   chats: Types.ObjectId[];
   website: string;
 }
@@ -29,12 +31,24 @@ const StartupSchema: Schema<Startup> = new Schema(
       type: String,
       required: true,
     },
+    details: {
+      type: String,
+      required: true,
+    },
     coverImage: {
       type: String,
       required: true,
     },
     description: {
       type: String,
+      required: true,
+    },
+    sharePrice: {
+      type: Number,
+      required: true,
+    },
+    shareQuantity: {
+      type: Number,
       required: true,
     },
     admin: [
@@ -44,12 +58,6 @@ const StartupSchema: Schema<Startup> = new Schema(
       },
     ],
     member: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-      },
-    ],
-    user: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Card,
@@ -22,6 +22,13 @@ function ResetPasswordContent() {
   const id = searchParams.get("id");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!forgotcode || !id) {
+      toast.error("Invalid or expired reset link");
+      router.push("/auth/login");
+    }
+  }, [forgotcode, id, router]);
 
   const handleResetPassword = async () => {
     if (!password) {
@@ -101,7 +108,13 @@ function ResetPasswordContent() {
 
 export default function ResetPassword() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="h-screen flex items-center justify-center">
+          Loading...
+        </div>
+      }
+    >
       <ResetPasswordContent />
     </Suspense>
   );

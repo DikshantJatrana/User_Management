@@ -9,6 +9,8 @@ export interface User extends Document {
   verifyCodeExpiry: Date;
   forgotCode: string;
   forgotCodeExpiry: Date;
+  orders: Types.ObjectId[];
+  balance: number;
 }
 
 const UserSchema: Schema<User> = new Schema({
@@ -44,6 +46,16 @@ const UserSchema: Schema<User> = new Schema({
   forgotCodeExpiry: {
     type: Date,
     default: null,
+  },
+  orders: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Order",
+    },
+  ],
+  balance: {
+    type: Number,
+    default: 0,
   },
 });
 

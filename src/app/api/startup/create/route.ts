@@ -14,8 +14,20 @@ export async function POST(req: Request) {
     const user = formData.get("user") as string;
     const logoFile = formData.get("logo") as File;
     const coverImageFile = formData.get("coverImage") as File;
-
-    if (!title || !description || !user || !logoFile || !coverImageFile) {
+    const sharePrice = formData.get("sharePrice") as string;
+    const shareQuantity = formData.get("shareQuantity") as string;
+    const details = formData.get("details") as string;
+    console.log(formData);
+    if (
+      !title ||
+      !description ||
+      !user ||
+      !logoFile ||
+      !coverImageFile ||
+      !sharePrice ||
+      !shareQuantity ||
+      !details
+    ) {
       return NextResponse.json({ error: "Invalid Details" }, { status: 400 });
     }
 
@@ -45,6 +57,9 @@ export async function POST(req: Request) {
       logo: logoUrl,
       coverImage: coverImageUrl,
       description,
+      sharePrice: parseFloat(sharePrice),
+      shareQuantity: parseInt(shareQuantity, 10),
+      details,
       admin: [user],
     });
 

@@ -18,6 +18,9 @@ const EditStartup = ({ params }: { params: { id: string } }) => {
   const [description, setDescription] = useState("");
   const [logo, setLogo] = useState<string | null>(null);
   const [coverImage, setCoverImage] = useState<string | null>(null);
+  const [sharePrice, setSharePrice] = useState<number>(0);
+  const [shareQuantity, setShareQuantity] = useState<number>(0);
+  const [details, setDetails] = useState("");
   const logoInputRef = useRef<HTMLInputElement>(null!);
   const coverInputRef = useRef<HTMLInputElement>(null!);
   const user = session?.user._id;
@@ -34,6 +37,9 @@ const EditStartup = ({ params }: { params: { id: string } }) => {
           setDescription(data.description);
           setLogo(data.logo);
           setCoverImage(data.coverImage);
+          setSharePrice(data.sharePrice);
+          setShareQuantity(data.shareQuantity);
+          setDetails(data.details);
         } else {
           toast.error(data.error || "Failed to fetch startup data.");
         }
@@ -75,6 +81,9 @@ const EditStartup = ({ params }: { params: { id: string } }) => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("user", user);
+      formData.append("sharePrice", sharePrice.toString());
+      formData.append("shareQuantity", shareQuantity.toString());
+      formData.append("details", details);
 
       if (logo) {
         formData.append("logo", logo);
@@ -180,6 +189,45 @@ const EditStartup = ({ params }: { params: { id: string } }) => {
               ref={coverInputRef}
               className="hidden"
               onChange={(e) => handleImageUpload(e, setCoverImage)}
+            />
+          </div>
+
+          <div>
+            <label className="text-lg font-semibold text-gray-800 mb-1">
+              Share Price
+            </label>
+            <Input
+              type="number"
+              placeholder="Enter Share Price"
+              value={sharePrice}
+              onChange={(e) => setSharePrice(Number(e.target.value))}
+              className="text-black"
+            />
+          </div>
+
+          <div>
+            <label className="text-lg font-semibold text-gray-800 mb-1">
+              Share Quantity
+            </label>
+            <Input
+              type="number"
+              placeholder="Enter Share Quantity"
+              value={shareQuantity}
+              onChange={(e) => setShareQuantity(Number(e.target.value))}
+              className="text-black"
+            />
+          </div>
+
+          <div>
+            <label className="text-lg font-semibold text-gray-800 mb-1">
+              Details
+            </label>
+            <Input
+              type="text"
+              placeholder="Enter Additional Details"
+              value={details}
+              onChange={(e) => setDetails(e.target.value)}
+              className="text-black"
             />
           </div>
 

@@ -7,12 +7,15 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const StartupDetails = ({ params }: { params: { id: string } }) => {
   const router = useRouter();
   const { id } = useParams();
-  const [startup, setStartup] = useState(null);
+  const [startup, setStartup] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<"details" | "buy">("details");
+  const [quantity, setQuantity] = useState(1);
   const { data: session } = useSession();
 
   useEffect(() => {
@@ -22,7 +25,6 @@ const StartupDetails = ({ params }: { params: { id: string } }) => {
         if (!res.ok) throw new Error("Failed to fetch startup details");
         const data = await res.json();
         setStartup(data);
-        console.log(data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -60,6 +62,30 @@ const StartupDetails = ({ params }: { params: { id: string } }) => {
     );
 
   const isAdmin = session?.user?._id === startup?.admin?.[0];
+
+  const handleBuyShares = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`/api/orders/create/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ quantity, userId: session?.user?._id }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        toast.success("Shares purchased successfully!");
+        router.push("/orders");
+      } else {
+        toast.error(data.error || "Failed to buy shares");
+      }
+    } catch (error) {
+      toast.error("An error occurred. Please try again.");
+    }
+  };
 
   return (
     <div
@@ -106,9 +132,84 @@ const StartupDetails = ({ params }: { params: { id: string } }) => {
           />
         </div>
 
-        <div className="mt-8 text-gray-700 prose max-w-full">
-          <ReactMarkdown>{startup?.description}</ReactMarkdown>
+        <div className="mt-8 flex gap-4">
+          <Button
+            onClick={() => setActiveTab("details")}
+            className={`flex-1 ${
+              activeTab === "details"
+                ? "bg-[#ffcc00] text-black"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            Details
+          </Button>
+          <Button
+            onClick={() => setActiveTab("buy")}
+            className={`flex-1 ${
+              activeTab === "buy"
+                ? "bg-[#ffcc00] text-black"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            Buy Shares
+          </Button>
         </div>
+
+        {activeTab === "details" && (
+          <div className="mt-8 bg-gray-50 p-3 rounded-md text-gray-900 prose max-w-full">
+            <h2 className="text-2xl font-bold mb-4">About the Startup</h2>
+            <ReactMarkdown>{startup?.description}</ReactMarkdown>
+
+            <div className="mt-8">
+              <h2 className="text-2xl font-bold mb-4">Share Information</h2>
+              <p className="text-gray-600">
+                <span className="font-semibold">Share Price:</span> ₹
+                {startup?.sharePrice}
+              </p>
+              <p className="text-gray-600">
+                <span className="font-semibold">Shares Available:</span>{" "}
+                {startup?.shareQuantity}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "buy" && (
+          <div className="mt-8 bg-gray-50 rounded-md p-6">
+            <h2 className="text-2xl font-bold mb-4">Buy Shares</h2>
+            <form onSubmit={handleBuyShares} className="space-y-4">
+              <div className="grid md:grid-cols-2">
+                <div>
+                  <label className="block text-sm font-medium text-gray-900">
+                    Quantity
+                  </label>
+                  <input
+                    type="number"
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                    min="1"
+                    max={startup?.shareQuantity}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm"
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <p className="text-3xl text-gray-900">
+                    <span className="font-semibold">Total Cost:</span> ₹
+                    {(startup?.sharePrice * quantity).toFixed(2)}
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="submit"
+                className="w-full bg-[#ffcc00] text-black font-bold hover:bg-[#ffcc00]/90"
+              >
+                Confirm Purchase
+              </Button>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );
