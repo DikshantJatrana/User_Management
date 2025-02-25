@@ -27,7 +27,7 @@ export const EmailPasswordLoginForm = () => {
       });
 
       if (result?.error) {
-        toast.error(result.error);
+        toast.error("Invalid Email and Passwords");
       } else {
         toast.success("Login successful");
         window.location.href = "/";

@@ -31,7 +31,7 @@ export default function OrdersPage() {
     async function fetchOrders() {
       if (session?.user?._id) {
         try {
-          const res = await fetch(`/api/auth/profile`, {
+          const res = await fetch(`/api/orders`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -40,7 +40,7 @@ export default function OrdersPage() {
           });
           if (!res.ok) throw new Error("Failed to fetch orders");
           const data = await res.json();
-          setOrders(data.user.orders);
+          setOrders(data.orders);
         } catch (error) {
           toast.error("Error loading orders");
         } finally {
