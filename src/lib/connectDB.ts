@@ -13,7 +13,6 @@ async function dbConnect(): Promise<void> {
   }
 
   try {
-    mongoose.set("debug", true);
     await mongoose.connect(process.env.MONGODB_URL || "", {
       serverSelectionTimeoutMS: 15000,
     });
