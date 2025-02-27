@@ -32,6 +32,10 @@ export default function LoginPage() {
           <CardTitle className="text-2xl text-center">Login</CardTitle>
           <CardDescription className="text-center">
             Choose your preferred login method
+            <div className="mt-1 bg-gray-200 rounded-md">
+              <p>Email : test1@test.com/test@test.com</p>
+              <p>Password : Test@12345</p>
+            </div>
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

@@ -74,6 +74,11 @@ export default function ForgotPassword() {
               required
             />
           </div>
+          <p className="mt-2 bg-gray-200 text-sm text-center rounded-md">
+            Email sending is not working because I donot have a paid domain; it
+            only works in testing mode,check Github for Mail send Code in
+            src/lib/sendMail.ts
+          </p>
         </CardContent>
         <CardFooter>
           <Button

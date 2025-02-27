@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
 
 export async function sendOTPEmail(to: string, verification_link: string) {
   const mailOptions = {
-    from: "noreply@yourapp.com",
+    from: "podcastcontent2@gmail.com",
     to,
     subject: "Your OTP Code",
     html: `

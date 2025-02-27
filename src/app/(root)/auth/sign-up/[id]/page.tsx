@@ -90,6 +90,11 @@ export default function VerifyEmail() {
           <p className="text-gray-700 text-sm font-bold">
             Didn’t receive the email? Resend it below.
           </p>
+          <p className="mt-2 bg-gray-200 text-sm text-center rounded-md">
+            Email sending is not working because I donot have a paid domain; it
+            only works in testing mode,check Github for Mail send Code in
+            src/lib/sendMail.ts
+          </p>
         </CardContent>
         <CardFooter className="flex justify-center">
           <Button
